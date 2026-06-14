@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 from typing import Any, Callable
 
-from actions.browser import focus_tab, navigate_current_tab, new_tab, open_tab
+from actions.browser import close_current_tab, close_tab, focus_tab, navigate_current_tab, new_tab, open_tab
 from actions.google import google_search, google_search_current_tab, google_search_new_tab
 from actions.type_text import type_text
 from actions.youtube import youtube_search, youtube_search_current_tab, youtube_search_new_tab
@@ -58,6 +58,14 @@ def _handle_focus_tab(intent: dict[str, Any]) -> ActionResult:
     return focus_tab(intent["query"])
 
 
+def _handle_close_current_tab(intent: dict[str, Any]) -> ActionResult:
+    return close_current_tab()
+
+
+def _handle_close_tab(intent: dict[str, Any]) -> ActionResult:
+    return close_tab(intent["query"])
+
+
 ACTION_HANDLERS: dict[str, Handler] = {
     "type_text": _handle_type_text,
     "youtube_search": _handle_youtube_search,
@@ -70,6 +78,8 @@ ACTION_HANDLERS: dict[str, Handler] = {
     "open_current_tab": _handle_open_current_tab,
     "new_tab": _handle_new_tab,
     "focus_tab": _handle_focus_tab,
+    "close_current_tab": _handle_close_current_tab,
+    "close_tab": _handle_close_tab,
 }
 
 

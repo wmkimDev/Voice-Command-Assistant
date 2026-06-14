@@ -63,6 +63,10 @@ def parse_local_intent(transcript: str) -> dict[str, Any] | None:
     normalized = transcript.strip()
     lowered = normalized.lower()
 
+    close_intent = _extract_close_tab_intent(normalized, lowered)
+    if close_intent:
+        return close_intent
+
     youtube_intent = _extract_youtube_intent(normalized, lowered)
     if youtube_intent:
         return youtube_intent
@@ -114,6 +118,8 @@ Available actions:
 - open_current_tab: navigate the current Chrome tab to a URL. Requires url.
 - new_tab: open a blank new Chrome tab. Requires no query or url.
 - focus_tab: focus an existing Chrome tab by title or URL keyword. Requires query.
+- close_current_tab: close the current Chrome tab. Requires no query or url.
+- close_tab: close one existing Chrome tab by title or URL keyword. Requires query.
 - unknown: use when intent is unclear or unsupported.
 
 Rules:
@@ -205,6 +211,14 @@ def validate_intent(intent: dict[str, Any]) -> dict[str, Any]:
             return UNKNOWN_INTENT.copy()
         return {"action": "focus_tab", "query": query.strip(), "url": None}
 
+    if action == "close_current_tab":
+        return {"action": "close_current_tab", "query": None, "url": None}
+
+    if action == "close_tab":
+        if not isinstance(query, str) or not query.strip():
+            return UNKNOWN_INTENT.copy()
+        return {"action": "close_tab", "query": query.strip(), "url": None}
+
     if action in {"open_tab", "open_current_tab"}:
         resolved_url = _resolve_url(url, query)
         if resolved_url is None:
@@ -224,6 +238,31 @@ def _extract_youtube_intent(text: str, lowered: str) -> dict[str, Any] | None:
     if _mentions_new_tab(lowered):
         return {"action": "youtube_search_new_tab", "query": query, "url": None}
     return {"action": "youtube_search", "query": query, "url": None}
+
+
+def _extract_close_tab_intent(text: str, lowered: str) -> dict[str, Any] | None:
+    close_words = ("닫아", "닫아줘", "닫기", "꺼", "꺼줘", "close")
+    if "탭" not in lowered and "tab" not in lowered:
+        return None
+    if not any(word in lowered for word in close_words):
+        return None
+
+    if _mentions_current_tab(lowered):
+        return {"action": "close_current_tab", "query": None, "url": None}
+
+    patterns = [
+        r"(.+?)\s*탭(?:을|를)?\s*(?:닫아줘|닫아|닫기|꺼줘|꺼)",
+        r"(?:close)\s+(.+?)\s+tab",
+        r"(.+?)\s+tab\s+(?:close)",
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, text, flags=re.IGNORECASE)
+        if match:
+            keyword = _clean_tab_keyword(match.group(1))
+            if keyword:
+                return {"action": "close_tab", "query": keyword, "url": None}
+
+    return None
 
 
 def _extract_google_intent(text: str, lowered: str) -> dict[str, Any] | None:

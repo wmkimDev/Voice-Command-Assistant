@@ -9,6 +9,7 @@ It takes a transcript from TypeWhisper, parses the intent with a fast local rule
 - Type dictated text into the currently focused input.
 - Open a blank Chrome tab.
 - Focus an existing Chrome tab by title or URL keyword.
+- Close the current tab or a tab matching a title/URL keyword.
 - Open known sites such as YouTube, ChatGPT, Coupang, Naver, and GitHub.
 - Search YouTube in one of three modes:
   - reuse an existing YouTube tab

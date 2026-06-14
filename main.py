@@ -105,6 +105,10 @@ def describe_intent(intent: dict[str, Any]) -> str:
         return "Chrome 빈 새 탭 열기 실행 예정"
     if action == "focus_tab":
         return f"Chrome 기존 탭 키워드 이동 실행 예정: {query}"
+    if action == "close_current_tab":
+        return "현재 Chrome 탭 닫기 실행 예정"
+    if action == "close_tab":
+        return f"Chrome 기존 탭 키워드 닫기 실행 예정: {query}"
     if action == "type_text":
         return f"현재 입력창에 텍스트 입력 예정: {query}"
     if action == "chatgpt_ask":

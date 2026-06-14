@@ -48,6 +48,12 @@ class MainOutputTests(unittest.TestCase):
             "Google 검색 실행 예정(현재 탭): weather",
         )
 
+    def test_describe_intent_close_tab(self) -> None:
+        self.assertEqual(
+            describe_intent({"action": "close_tab", "query": "docs", "url": None}),
+            "Chrome 기존 탭 키워드 닫기 실행 예정: docs",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -164,6 +164,26 @@ class IntentParserTests(unittest.TestCase):
             {"action": "focus_tab", "query": "docs", "url": None},
         )
 
+    def test_local_parser_handles_close_current_tab(self) -> None:
+        self.assertEqual(
+            parse_local_intent("현재 탭 닫아줘"),
+            {"action": "close_current_tab", "query": None, "url": None},
+        )
+        self.assertEqual(
+            parse_local_intent("close current tab"),
+            {"action": "close_current_tab", "query": None, "url": None},
+        )
+
+    def test_local_parser_handles_close_tab_by_keyword(self) -> None:
+        self.assertEqual(
+            parse_local_intent("문서 탭 닫아줘"),
+            {"action": "close_tab", "query": "문서", "url": None},
+        )
+        self.assertEqual(
+            parse_local_intent("close docs tab"),
+            {"action": "close_tab", "query": "docs", "url": None},
+        )
+
     def test_local_parser_uses_type_text_for_dictation(self) -> None:
         self.assertEqual(
             parse_local_intent("안녕하세요 반갑습니다"),

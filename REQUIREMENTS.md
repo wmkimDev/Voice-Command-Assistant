@@ -81,6 +81,8 @@ LLM은 항상 아래 형식의 JSON만 출력해야 한다. 다른 텍스트 없
 | `open_current_tab` | 현재 Chrome 탭을 특정 URL 또는 URL 별칭으로 이동 | `url` |
 | `new_tab` | 크롬에 빈 새 탭 열기 | — |
 | `focus_tab` | 기존 크롬 탭을 제목 또는 URL 키워드로 찾아 포커스 | `query` |
+| `close_current_tab` | 현재 Chrome 탭 닫기 | — |
+| `close_tab` | 기존 크롬 탭을 제목 또는 URL 키워드로 찾아 닫기 | `query` |
 | `unknown` | 파싱 실패 또는 해당 없음 | — |
 
 ### 검증 규칙

@@ -26,6 +26,10 @@ class ActionRouterTests(unittest.TestCase):
     def test_focus_tab_handler_exists(self) -> None:
         self.assertIn("focus_tab", action_router.ACTION_HANDLERS)
 
+    def test_close_tab_handlers_exist(self) -> None:
+        self.assertIn("close_current_tab", action_router.ACTION_HANDLERS)
+        self.assertIn("close_tab", action_router.ACTION_HANDLERS)
+
     def test_youtube_mode_handlers_exist(self) -> None:
         self.assertIn("youtube_search_new_tab", action_router.ACTION_HANDLERS)
         self.assertIn("youtube_search_current_tab", action_router.ACTION_HANDLERS)

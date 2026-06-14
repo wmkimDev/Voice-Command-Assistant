@@ -19,6 +19,8 @@ ALLOWED_ACTIONS = {
     "open_current_tab",
     "new_tab",
     "focus_tab",
+    "close_current_tab",
+    "close_tab",
     "unknown",
 }
 
