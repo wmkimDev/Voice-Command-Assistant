@@ -14,6 +14,7 @@ It takes a transcript from TypeWhisper, parses the intent with a fast local rule
   - reuse an existing YouTube tab
   - open a new search tab
   - search in the current Chrome tab
+- Search Google in the same tab modes.
 - Preserve Korean, English, and mixed-language queries.
 - Show a human-readable execution summary plus machine-readable JSON.
 - Run fully locally after dependencies are installed.
@@ -86,6 +87,7 @@ python main.py "쿠팡 탭으로 이동해줘"
 python main.py "새 탭에서 유튜브에 로파이 음악 검색해줘"
 python main.py "현재 탭에서 유튜브에 로파이 음악 검색해줘"
 python main.py "로파이 음악이라고 유튜브에 검색해줘"
+python main.py "구글에 서울 날씨 검색해줘"
 ```
 
 ## Text Input Testing

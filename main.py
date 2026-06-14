@@ -91,6 +91,12 @@ def describe_intent(intent: dict[str, Any]) -> str:
         return f"YouTube 검색 실행 예정(새 탭): {query}"
     if action == "youtube_search_current_tab":
         return f"YouTube 검색 실행 예정(현재 탭): {query}"
+    if action == "google_search":
+        return f"Google 검색 실행 예정(기존 Google 탭 재사용): {query}"
+    if action == "google_search_new_tab":
+        return f"Google 검색 실행 예정(새 탭): {query}"
+    if action == "google_search_current_tab":
+        return f"Google 검색 실행 예정(현재 탭): {query}"
     if action == "open_tab":
         return f"Chrome URL/사이트 이동 실행 예정: {url}"
     if action == "open_current_tab":

@@ -42,6 +42,12 @@ class MainOutputTests(unittest.TestCase):
             "YouTube 검색 실행 예정(새 탭): lofi",
         )
 
+    def test_describe_intent_google_current_tab(self) -> None:
+        self.assertEqual(
+            describe_intent({"action": "google_search_current_tab", "query": "weather", "url": None}),
+            "Google 검색 실행 예정(현재 탭): weather",
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

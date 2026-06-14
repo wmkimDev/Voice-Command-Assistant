@@ -104,6 +104,36 @@ class IntentParserTests(unittest.TestCase):
             {"action": "youtube_search_current_tab", "query": "로파이 음악", "url": None},
         )
 
+    def test_local_parser_handles_google_search(self) -> None:
+        self.assertEqual(
+            parse_local_intent("구글에 서울 날씨 검색해줘"),
+            {"action": "google_search", "query": "서울 날씨", "url": None},
+        )
+        self.assertEqual(
+            parse_local_intent("서울 날씨라고 구글에 검색해줘"),
+            {"action": "google_search", "query": "서울 날씨", "url": None},
+        )
+
+    def test_local_parser_handles_google_search_modes(self) -> None:
+        self.assertEqual(
+            parse_local_intent("새 탭에서 구글에 서울 날씨 검색해줘"),
+            {"action": "google_search_new_tab", "query": "서울 날씨", "url": None},
+        )
+        self.assertEqual(
+            parse_local_intent("현재 탭에서 구글에 서울 날씨 검색해줘"),
+            {"action": "google_search_current_tab", "query": "서울 날씨", "url": None},
+        )
+
+    def test_local_parser_handles_english_google_search(self) -> None:
+        self.assertEqual(
+            parse_local_intent("search google for macos automation"),
+            {"action": "google_search", "query": "macos automation", "url": None},
+        )
+        self.assertEqual(
+            parse_local_intent("google python unittest"),
+            {"action": "google_search", "query": "python unittest", "url": None},
+        )
+
     def test_local_parser_handles_current_tab_site_navigation(self) -> None:
         self.assertEqual(
             parse_local_intent("현재 탭에서 유튜브로 이동해줘"),

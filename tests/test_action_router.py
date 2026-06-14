@@ -30,6 +30,11 @@ class ActionRouterTests(unittest.TestCase):
         self.assertIn("youtube_search_new_tab", action_router.ACTION_HANDLERS)
         self.assertIn("youtube_search_current_tab", action_router.ACTION_HANDLERS)
 
+    def test_google_mode_handlers_exist(self) -> None:
+        self.assertIn("google_search", action_router.ACTION_HANDLERS)
+        self.assertIn("google_search_new_tab", action_router.ACTION_HANDLERS)
+        self.assertIn("google_search_current_tab", action_router.ACTION_HANDLERS)
+
     def test_current_tab_handler_exists(self) -> None:
         self.assertIn("open_current_tab", action_router.ACTION_HANDLERS)
 

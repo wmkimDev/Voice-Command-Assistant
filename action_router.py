@@ -4,6 +4,7 @@ import logging
 from typing import Any, Callable
 
 from actions.browser import focus_tab, navigate_current_tab, new_tab, open_tab
+from actions.google import google_search, google_search_current_tab, google_search_new_tab
 from actions.type_text import type_text
 from actions.youtube import youtube_search, youtube_search_current_tab, youtube_search_new_tab
 
@@ -29,6 +30,18 @@ def _handle_youtube_search_current_tab(intent: dict[str, Any]) -> ActionResult:
     return youtube_search_current_tab(intent["query"])
 
 
+def _handle_google_search(intent: dict[str, Any]) -> ActionResult:
+    return google_search(intent["query"])
+
+
+def _handle_google_search_new_tab(intent: dict[str, Any]) -> ActionResult:
+    return google_search_new_tab(intent["query"])
+
+
+def _handle_google_search_current_tab(intent: dict[str, Any]) -> ActionResult:
+    return google_search_current_tab(intent["query"])
+
+
 def _handle_open_tab(intent: dict[str, Any]) -> ActionResult:
     return open_tab(intent["url"])
 
@@ -50,6 +63,9 @@ ACTION_HANDLERS: dict[str, Handler] = {
     "youtube_search": _handle_youtube_search,
     "youtube_search_new_tab": _handle_youtube_search_new_tab,
     "youtube_search_current_tab": _handle_youtube_search_current_tab,
+    "google_search": _handle_google_search,
+    "google_search_new_tab": _handle_google_search_new_tab,
+    "google_search_current_tab": _handle_google_search_current_tab,
     "open_tab": _handle_open_tab,
     "open_current_tab": _handle_open_current_tab,
     "new_tab": _handle_new_tab,

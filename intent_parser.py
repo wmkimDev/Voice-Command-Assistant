@@ -67,6 +67,10 @@ def parse_local_intent(transcript: str) -> dict[str, Any] | None:
     if youtube_intent:
         return youtube_intent
 
+    google_intent = _extract_google_intent(normalized, lowered)
+    if google_intent:
+        return google_intent
+
     current_url = _extract_current_tab_url(normalized, lowered)
     if current_url:
         return {"action": "open_current_tab", "query": None, "url": current_url}
@@ -102,6 +106,9 @@ Available actions:
 - youtube_search: search YouTube by reusing an existing YouTube tab if available. Requires query.
 - youtube_search_new_tab: search YouTube in a new tab. Requires query.
 - youtube_search_current_tab: search YouTube in the current Chrome tab. Requires query.
+- google_search: search Google by reusing an existing Google tab if available. Requires query.
+- google_search_new_tab: search Google in a new tab. Requires query.
+- google_search_current_tab: search Google in the current Chrome tab. Requires query.
 - chatgpt_ask: put a question into the ChatGPT input box. Requires query. Do not submit.
 - open_tab: open or focus a Chrome tab for a URL. Requires url.
 - open_current_tab: navigate the current Chrome tab to a URL. Requires url.
@@ -141,6 +148,9 @@ Output: {{"action":"open_tab","query":null,"url":"https://www.coupang.com"}}
 
 Input: 유튜브에서 cat videos 검색해줘
 Output: {{"action":"youtube_search","query":"cat videos","url":null}}
+
+Input: 구글에 서울 날씨 검색해줘
+Output: {{"action":"google_search","query":"서울 날씨","url":null}}
 """.strip()
 
 
@@ -173,7 +183,16 @@ def validate_intent(intent: dict[str, Any]) -> dict[str, Any]:
     if url == "":
         url = None
 
-    if action in {"type_text", "youtube_search", "youtube_search_new_tab", "youtube_search_current_tab", "chatgpt_ask"}:
+    if action in {
+        "type_text",
+        "youtube_search",
+        "youtube_search_new_tab",
+        "youtube_search_current_tab",
+        "google_search",
+        "google_search_new_tab",
+        "google_search_current_tab",
+        "chatgpt_ask",
+    }:
         if not isinstance(query, str) or not query.strip():
             return UNKNOWN_INTENT.copy()
         return {"action": action, "query": query, "url": None}
@@ -207,15 +226,43 @@ def _extract_youtube_intent(text: str, lowered: str) -> dict[str, Any] | None:
     return {"action": "youtube_search", "query": query, "url": None}
 
 
+def _extract_google_intent(text: str, lowered: str) -> dict[str, Any] | None:
+    query = _extract_search_query(text, targets=("구글", "google"))
+    if query is None:
+        return None
+
+    if _mentions_current_tab(lowered):
+        return {"action": "google_search_current_tab", "query": query, "url": None}
+    if _mentions_new_tab(lowered):
+        return {"action": "google_search_new_tab", "query": query, "url": None}
+    return {"action": "google_search", "query": query, "url": None}
+
+
 def _extract_youtube_query(text: str) -> str | None:
-    patterns = [
-        r"(?:새\s*탭(?:에서|으로|을\s*열어서)?\s*)?유튜브(?:에서|에)?\s*(.+?)\s*(?:검색해줘|검색|찾아줘|찾아)",
-        r"(?:현재\s*탭(?:에서|으로)?\s*)?유튜브(?:에서|에)?\s*(.+?)\s*(?:검색해줘|검색|찾아줘|찾아)",
-        r"유튜브(?:에서|에)?\s*(.+?)\s*(?:검색해줘|검색|찾아줘|찾아)",
-        r"(.+?)\s*(?:이라고|라고|이라|라|을|를)?\s*유튜브(?:에서|에)?\s*(?:검색해줘|검색|찾아줘|찾아)",
-        r"(?:search\s+)?youtube\s+(?:for\s+)?(.+)",
-        r"(?:search\s+)?유튜브\s+(.+)",
-    ]
+    return _extract_search_query(text, targets=("유튜브", "youtube"))
+
+
+def _extract_search_query(text: str, targets: tuple[str, ...]) -> str | None:
+    korean_targets = [target for target in targets if not target.isascii()]
+    english_targets = [target for target in targets if target.isascii()]
+    korean_target_pattern = "|".join(re.escape(target) for target in korean_targets)
+    english_target_pattern = "|".join(re.escape(target) for target in english_targets)
+    patterns = []
+    if korean_target_pattern:
+        patterns.extend(
+            [
+                rf"(?:새\s*탭(?:에서|으로|을\s*열어서)?\s*)?(?:{korean_target_pattern})(?:에서|에)?\s*(.+?)\s*(?:검색해줘|검색|찾아줘|찾아)",
+                rf"(?:현재\s*탭(?:에서|으로)?\s*)?(?:{korean_target_pattern})(?:에서|에)?\s*(.+?)\s*(?:검색해줘|검색|찾아줘|찾아)",
+                rf"(?:{korean_target_pattern})(?:에서|에)?\s*(.+?)\s*(?:검색해줘|검색|찾아줘|찾아)",
+                rf"(.+?)\s*(?:이라고|라고|이라|라|을|를)?\s*(?:{korean_target_pattern})(?:에서|에)?\s*(?:검색해줘|검색|찾아줘|찾아)",
+            ]
+        )
+    if english_target_pattern:
+        patterns.extend(
+            [
+                rf"(?:search\s+)?(?:{english_target_pattern})\s+(?:for\s+)?(.+)",
+            ]
+        )
     for pattern in patterns:
         match = re.search(pattern, text, flags=re.IGNORECASE)
         if match:

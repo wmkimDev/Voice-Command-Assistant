@@ -73,6 +73,9 @@ LLM은 항상 아래 형식의 JSON만 출력해야 한다. 다른 텍스트 없
 | `youtube_search` | 크롬에서 유튜브 검색 | `query` |
 | `youtube_search_new_tab` | 새 탭에서 유튜브 검색 | `query` |
 | `youtube_search_current_tab` | 현재 Chrome 탭에서 유튜브 검색 | `query` |
+| `google_search` | 크롬에서 구글 검색 | `query` |
+| `google_search_new_tab` | 새 탭에서 구글 검색 | `query` |
+| `google_search_current_tab` | 현재 Chrome 탭에서 구글 검색 | `query` |
 | `chatgpt_ask` | ChatGPT 탭 찾아서 입력창에 텍스트 입력 | `query` |
 | `open_tab` | 특정 URL 또는 URL 별칭으로 이동. 이미 열려 있으면 포커스, 없으면 새 탭으로 열기 | `url` |
 | `open_current_tab` | 현재 Chrome 탭을 특정 URL 또는 URL 별칭으로 이동 | `url` |
