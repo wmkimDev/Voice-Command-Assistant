@@ -30,6 +30,11 @@ def main(argv: list[str] | None = None) -> int:
         action="store_true",
         help="Do not restore the previous clipboard after type_text. Useful for paste debugging.",
     )
+    parser.add_argument(
+        "--commands-only",
+        action="store_true",
+        help="Do not paste plain dictation text. Useful when TypeWhisper is used only for commands.",
+    )
     args = parser.parse_args(argv)
 
     setup_logging()
@@ -46,6 +51,16 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.dry_run:
         print(json.dumps({"ok": True, "dry_run": True, "intent": intent}, ensure_ascii=False))
+        return 0
+
+    if args.commands_only and intent.get("action") == "type_text":
+        result = {
+            "ok": True,
+            "action": "skip_text",
+            "message": "plain dictation skipped in commands-only mode",
+        }
+        print(f"결과: {describe_result(result)}")
+        print(json.dumps({"intent": intent, "result": result}, ensure_ascii=False))
         return 0
 
     if args.delay > 0:

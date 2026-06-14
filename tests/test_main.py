@@ -36,6 +36,18 @@ class MainOutputTests(unittest.TestCase):
             "성공 (youtube_search) - https://www.youtube.com/results?search_query=test",
         )
 
+    def test_describe_result_skipped_text(self) -> None:
+        self.assertEqual(
+            describe_result(
+                {
+                    "ok": True,
+                    "action": "skip_text",
+                    "message": "plain dictation skipped in commands-only mode",
+                }
+            ),
+            "성공 (skip_text) - plain dictation skipped in commands-only mode",
+        )
+
     def test_describe_intent_youtube_new_tab(self) -> None:
         self.assertEqual(
             describe_intent({"action": "youtube_search_new_tab", "query": "lofi", "url": None}),
