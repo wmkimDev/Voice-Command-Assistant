@@ -179,9 +179,12 @@ This repo also includes wrapper scripts for TypeWhisper script integrations:
 ```bash
 /path/to/Voice-Command-Assistant/scripts/voca_typewhisper_dry_run.sh
 /path/to/Voice-Command-Assistant/scripts/voca_typewhisper.sh
+/path/to/Voice-Command-Assistant/scripts/voca_typewhisper_silent.sh
 ```
 
-If TypeWhisper's script integration treats stdout as replacement text, use the webhook bridge instead.
+If TypeWhisper's script integration treats stdout as replacement text, use
+`voca_typewhisper_silent.sh`. It logs Voca output to `logs/typewhisper-script.log`
+and returns empty stdout.
 
 ## Project Structure
 
