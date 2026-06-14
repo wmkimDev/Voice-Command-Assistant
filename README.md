@@ -112,79 +112,41 @@ After the command finishes, press `Cmd+V` manually in the target input.
 
 ## TypeWhisper Integration
 
-For Korean commands, use a cloud transcription engine such as OpenAI `gpt-4o-transcribe` or `gpt-4o-mini-transcribe`.
+For Korean commands, Apple Speech in TypeWhisper works well when the Korean model is loaded.
 
-### Option A: Webhook Bridge
+Use Voca voice mode. Voca records a short wav file, asks TypeWhisper's API server
+to transcribe it, displays the transcript and parsed intent, then runs the command.
+TypeWhisper does not insert text into the focused app.
 
-Start Voca's local webhook bridge:
-
-```bash
-python voca_server.py --dry-run
-```
-
-Use dry-run first. When parsing looks correct, restart without `--dry-run`:
-
-```bash
-python voca_server.py
-```
-
-In TypeWhisper:
-
-1. Install the Webhook integration.
-2. Set the webhook URL to `http://127.0.0.1:8765/typewhisper`.
-3. Use `POST`.
-4. Send the transcript as plain text, or as JSON with a `text` or `transcript` field.
-
-The bridge accepts common payload shapes:
-
-```json
-{"text": "유튜브에서 로파이 음악 검색해줘"}
-```
-
-```json
-{"transcript": "현재 탭 닫아줘"}
-```
-
-Plain text also works:
+One-time setup in TypeWhisper:
 
 ```text
-새 탭 열어줘
+Settings -> Advanced -> API Server
 ```
 
-You can verify the bridge manually:
+Then run:
 
 ```bash
-curl -s http://127.0.0.1:8765/health
-curl -s -X POST http://127.0.0.1:8765/typewhisper \
-  -H 'Content-Type: application/json' \
-  -d '{"text":"새 탭 열어줘"}'
+python voice_command.py --dry-run
 ```
 
-### Option B: Script Integration
-
-Configure TypeWhisper to run an external command after transcription. Prefer stdin so quotes and newlines survive:
+When parsing looks correct:
 
 ```bash
-printf '%s' "{transcript}" | python /path/to/Voice-Command-Assistant/main.py
+python voice_command.py
 ```
 
-Use dry-run first while tuning commands:
+Useful options:
 
 ```bash
-printf '%s' "{transcript}" | python /path/to/Voice-Command-Assistant/main.py --dry-run
+python voice_command.py --duration 4
+python voice_command.py --loop --duration 3
+python voice_command.py --dry-run --keep-audio
 ```
 
-This repo also includes wrapper scripts for TypeWhisper script integrations:
-
-```bash
-/path/to/Voice-Command-Assistant/scripts/voca_typewhisper_dry_run.sh
-/path/to/Voice-Command-Assistant/scripts/voca_typewhisper.sh
-/path/to/Voice-Command-Assistant/scripts/voca_typewhisper_silent.sh
-```
-
-If TypeWhisper's script integration treats stdout as replacement text, use
-`voca_typewhisper_silent.sh`. It logs Voca output to `logs/typewhisper-script.log`
-and returns empty stdout.
+Voice mode is command-only by default. If a transcript is plain dictated text
+instead of a supported command, Voca skips it instead of pasting it into the
+focused app.
 
 ## Project Structure
 
