@@ -112,6 +112,56 @@ After the command finishes, press `Cmd+V` manually in the target input.
 
 ## TypeWhisper Integration
 
+For Korean commands, use a cloud transcription engine such as OpenAI `gpt-4o-transcribe` or `gpt-4o-mini-transcribe`.
+
+### Option A: Webhook Bridge
+
+Start Voca's local webhook bridge:
+
+```bash
+python voca_server.py --dry-run
+```
+
+Use dry-run first. When parsing looks correct, restart without `--dry-run`:
+
+```bash
+python voca_server.py
+```
+
+In TypeWhisper:
+
+1. Install the Webhook integration.
+2. Set the webhook URL to `http://127.0.0.1:8765/typewhisper`.
+3. Use `POST`.
+4. Send the transcript as plain text, or as JSON with a `text` or `transcript` field.
+
+The bridge accepts common payload shapes:
+
+```json
+{"text": "유튜브에서 로파이 음악 검색해줘"}
+```
+
+```json
+{"transcript": "현재 탭 닫아줘"}
+```
+
+Plain text also works:
+
+```text
+새 탭 열어줘
+```
+
+You can verify the bridge manually:
+
+```bash
+curl -s http://127.0.0.1:8765/health
+curl -s -X POST http://127.0.0.1:8765/typewhisper \
+  -H 'Content-Type: application/json' \
+  -d '{"text":"새 탭 열어줘"}'
+```
+
+### Option B: Script Integration
+
 Configure TypeWhisper to run an external command after transcription. Prefer stdin so quotes and newlines survive:
 
 ```bash
@@ -123,6 +173,15 @@ Use dry-run first while tuning commands:
 ```bash
 printf '%s' "{transcript}" | python /path/to/Voice-Command-Assistant/main.py --dry-run
 ```
+
+This repo also includes wrapper scripts for TypeWhisper script integrations:
+
+```bash
+/path/to/Voice-Command-Assistant/scripts/voca_typewhisper_dry_run.sh
+/path/to/Voice-Command-Assistant/scripts/voca_typewhisper.sh
+```
+
+If TypeWhisper's script integration treats stdout as replacement text, use the webhook bridge instead.
 
 ## Project Structure
 
