@@ -55,10 +55,6 @@ Dry-run mode parses the transcript but does not run AppleScript actions.
 python main.py --dry-run "유튜브에서 고양이 검색해줘"
 python main.py --dry-run "새 탭 열어줘"
 python main.py --dry-run "문서 탭으로 이동해줘"
-python main.py --dry-run "쿠팡 탭으로 이동해줘"
-python main.py --dry-run "새 탭에서 유튜브에 로파이 음악 검색해줘"
-python main.py --dry-run "현재 탭에서 유튜브에 로파이 음악 검색해줘"
-python main.py --dry-run "현재 탭에서 유튜브로 이동해줘"
 ```
 
 Output includes a human-readable summary first and a JSON object on the last line:
@@ -74,17 +70,25 @@ Output includes a human-readable summary first and a JSON object on the last lin
 ```bash
 python main.py "새 탭 열어줘"
 python main.py "문서 탭으로 이동해줘"
-python main.py "쿠팡 탭으로 이동해줘"
 python main.py "유튜브에서 로파이 음악 검색해줘"
-python main.py "새 탭에서 유튜브에 로파이 음악 검색해줘"
-python main.py "현재 탭에서 유튜브에 로파이 음악 검색해줘"
 ```
 
 When running a real action, the output also includes a result line before the final JSON.
 
-## Command Examples
+## Supported Commands
 
-### Text Input
+See [SUPPORTED_COMMANDS.md](SUPPORTED_COMMANDS.md) for the full list of currently supported command patterns.
+
+Quick examples:
+
+```bash
+python main.py "쿠팡 탭으로 이동해줘"
+python main.py "새 탭에서 유튜브에 로파이 음악 검색해줘"
+python main.py "현재 탭에서 유튜브에 로파이 음악 검색해줘"
+python main.py "로파이 음악이라고 유튜브에 검색해줘"
+```
+
+## Text Input Testing
 
 ```bash
 python main.py --delay 5 "이 문장이 입력되는지 테스트"
@@ -102,22 +106,6 @@ After the command finishes, press `Cmd+V` manually in the target input.
 
 - If manual paste works, the clipboard is correct and macOS is likely blocking the synthetic paste keystroke.
 - If manual paste does not work, the target input was not focused or the clipboard was not set.
-
-### Tab Control
-
-- `새 탭 열어줘`: opens a blank Chrome tab.
-- `{키워드} 탭으로 이동해줘`: focuses an existing tab whose title or URL contains the keyword.
-- Spaces are ignored for tab keyword matching, so `베이직 기어` can match a tab titled `베이직기어`.
-- `{사이트별칭} 탭으로 이동해줘`: for known aliases like 쿠팡, 네이버, GitHub, focuses the site if open or opens it if missing.
-
-### YouTube Search
-
-- `유튜브에서 {검색어} 검색해줘`: reuses an existing YouTube tab if possible.
-- `유튜브에서 {검색어}라고 검색해줘`: strips quote particles like `라고`, `이라`, and searches for the query.
-- `{검색어}이라 유튜브에서 검색해줘`: also supported.
-- `새 탭에서 유튜브에 {검색어} 검색해줘`: always opens a new search tab.
-- `현재 탭에서 유튜브에 {검색어} 검색해줘`: navigates the current Chrome tab to YouTube search.
-- `현재 탭에서 {사이트별칭}로 이동해줘`: navigates the current Chrome tab to that site.
 
 ## TypeWhisper Integration
 
@@ -162,4 +150,3 @@ for f in applescript/*.applescript; do osacompile -o /tmp/voca-check.scpt "$f" |
 ## Notes
 
 This is a personal local automation prototype, not a general-purpose voice assistant. The safest path is to keep frequent commands rule-based and use the Ollama fallback only for ambiguous intent parsing.
-
